@@ -14,7 +14,7 @@ Esta es una página web básica construida con Django que incluye un Service Wor
 
 ## Implementación del Service Worker
 
-El Service Worker se encuentra en `static/js/sw.js` y se encarga de almacenar en caché, limpiar cachés obsoletas y servir archivos offline.
+El Service Worker se encuentra en `serviceworkersjs` y se encarga de almacenar en caché, limpiar cachés obsoletas y servir archivos offline.
 
 ### Cómo Funciona
 
