@@ -2,7 +2,7 @@
 
 var staticCacheName = "django-pwa-v" + new Date().getTime();
 var filesToCache = [
-    '/core/templates/base.html',
+    '/core/templates/index.html',
     '/offline/',
     '/static/css/style.css',
     '/static/js/main.js',
