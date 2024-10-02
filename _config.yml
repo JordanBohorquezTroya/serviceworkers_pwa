@@ -1,0 +1,20 @@
+title: "Mi Sitio en Jekyll"
+description: "Descripción de mi sitio"
+baseurl: "" # deja esto vacío para GitHub Pages
+url: "https://jordanbohorqueztroya.github.io/serviceworkers_pwa/" # reemplázalo con tu URL de GitHub Pages
+theme: minima # Tema por defecto de Jekyll
+markdown: kramdown
+
+# Configura el directorio de la fuente si tu index.html está en 'templates'
+source: templates
+
+# Excluir archivos y carpetas específicos
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - .github
+
+# Carpeta de destino donde Jekyll genera el sitio estático
+destination: _site
