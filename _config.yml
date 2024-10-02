@@ -6,7 +6,7 @@ theme: minima # Tema por defecto de Jekyll
 markdown: kramdown
 
 # Configura el directorio de la fuente si tu index.html está en 'templates'
-source: ./core
+source: ./core/templates
 
 # Excluir archivos y carpetas específicos
 exclude:
