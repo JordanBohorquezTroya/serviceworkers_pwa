@@ -1,6 +1,6 @@
 title: "Mi Sitio en Jekyll"
 description: "Descripción de mi sitio"
-baseurl: "" # deja esto vacío para GitHub Pages
+baseurl: "/serviceworkers_pwa" # deja esto vacío para GitHub Pages
 url: "https://jordanbohorqueztroya.github.io/serviceworkers_pwa/" # reemplázalo con tu URL de GitHub Pages
 theme: minima # Tema por defecto de Jekyll
 markdown: kramdown
