@@ -23,7 +23,8 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls')), 
-    path('', include('pwa.urls')),
+    path('pwa/', include('pwa.urls')),
+    
 ]
 
 # Solo servir archivos estáticos en modo de desarrollo

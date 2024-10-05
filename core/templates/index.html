@@ -5,17 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Datos Personales</title>
     
-    
     {% load static %}
-    
   
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-
     <link rel="manifest" href="{% static 'manifest.json' %}">
 
     {% load pwa %}
-
     {% progressive_web_app_meta %}
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-messaging.js";
+    
+        const firebaseConfig = {
+            apiKey: "AIzaSyDjtFj1uX9K03oPulM6HsLVio3m3flbUlw",
+            authDomain: "proyecto-push-cae2e.firebaseapp.com",
+            projectId: "proyecto-push-cae2e",
+            storageBucket: "proyecto-push-cae2e.appspot.com",
+            messagingSenderId: "6586484008",
+            appId: "1:6586484008:web:2fcfee36cd60d7d1ec3c1d"
+        };
+    
+        // Inicializa Firebase
+        const app = initializeApp(firebaseConfig);
+        const messaging = getMessaging(app);
+    
+        // Registrar el Service Worker
+        navigator.serviceWorker
+            .register('/serviceworker.js')
+            .then((registration) => {
+                console.log('Service Worker registrado con éxito:', registration);
+    
+                return getToken(messaging, { 
+                    vapidKey: "BHT81kOKDU_TpvzJSRLHrisz9efs-2OXCMth2Sv7wzupxkd_p78THMYRoik0Zpf12GF0-3ouRc3YlSK-9LTNzx8",
+                    serviceWorkerRegistration: registration
+                });
+            })
+            .then((token) => {
+                if (token) {
+                    console.log("Token de Firebase:", token);
+    
+                    // Guardar el token en la base de datos
+                    return fetch('guardar_token/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({'token': token})
+                    });
+                } else {
+                    console.log("No se pudo obtener el token");
+                }
+            })
+            .then(() => {
+                console.log("Se ha guardado el token en la base de datos");
+            })
+            .catch((error) => {
+                console.error("Error al registrar el Service Worker o obtener el token:", error);
+            });
+    
+        // Manejo de mensajes en primer plano
+        onMessage(messaging, (payload) => {
+            console.log("Mensaje recibido en primer plano:", payload);
+            const notificationTitle = payload.notification.title;
+            const notificationOptions = {
+                body: payload.notification.body,
+                icon: "/static/icono/image.png"
+            };
+            new Notification(notificationTitle, notificationOptions);
+        });
+    
+        // Solicitar permiso para las notificaciones al cargar la página
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    console.log("Permiso de notificaciones concedido.");
+                }
+            });
+        }
+        
+        setTimeout(() => {
+            console.log("5 segundos han pasado, mostrando la notificación...");
+
+            if (Notification.permission === "granted") {
+                const notificationTitle = "¡Hola!";
+                const notificationOptions = {
+                    body: "Gracias por estar en nuestra página durante 5 segundos.",
+                    icon: "/static/icono/image.png"
+                };
+                new Notification(notificationTitle, notificationOptions);
+            } else {
+                console.log("El permiso para mostrar notificaciones no ha sido concedido.");
+            }
+        }, 5000);
+
+    
+    </script>
+    
 </head>
 <body>
 
@@ -43,16 +129,11 @@
     
     <section>
         <h2>Características</h2>
-        <div id="caracteristicas">
-            
-        </div>  
+        <div id="caracteristicas"></div>  
         <button id="infoMostrar">Ver más</button>
     </section>
    
     <!-- Corregir la ruta del JavaScript -->
     <script src="{% static 'js/main.js' %}"></script>
-
-    
-    
 </body>
 </html>

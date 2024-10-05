@@ -1,13 +1,11 @@
-// Base Service Worker implementation.  To use your own Service Worker, set the PWA_SERVICE_WORKER_PATH variable in settings.py
+// Base Service Worker
 
 var staticCacheName = "django-pwa-v" + new Date().getTime();
 var filesToCache = [
     '/core/templates/index.html',
-    '/offline/',
+    '/core/templates/offline.html/',
     '/static/css/style.css',
     '/static/js/main.js',
-    
-    
 ];
 
 // Cache on install
@@ -36,43 +34,45 @@ self.addEventListener('activate', event => {
 });
 
 // Serve from Cache
-/*self.addEventListener("fetch", event => {
-    event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                return response || fetch(event.request);
-            })
-            .catch(() => {
-                return caches.match('/offline/');
-            })
-    )
-});*/
-
-self.addEventListener("fetch", function(event) {
-    // Filtra las solicitudes con esquemas no compatibles (como 'chrome-extension://')
-    if (event.request.url.startsWith('chrome-extension://')) {
-        return; // No hacer nada si la solicitud es de una extensión de Chrome
+self.addEventListener("fetch", event => {
+    // Solo cachear solicitudes con esquema http o https
+    if (event.request.url.startsWith('http')) {
+        event.respondWith(
+            fetch(event.request)
+                .then(response => {
+                    return caches.open(staticCacheName).then(cache => {
+                        // Verificar que la respuesta sea válida antes de almacenarla en la caché
+                        if (event.request.method === 'GET' && response.status === 200) {
+                            cache.put(event.request, response.clone());
+                        }
+                        return response;
+                    });
+                })
+                .catch(() => {
+                    // Si no hay conexión, devolver desde la caché
+                    return caches.match(event.request)
+                        .then(response => {
+                            return response || caches.match('/offline/'); // Cambiar 'offline' por tu archivo adecuado
+                        });
+                })
+        );
     }
+});
 
-    event.respondWith(
-        fetch(event.request)
-        .then(function(response) {
-            return caches.open(staticCacheName)
-            .then(function(cache) {
-                // Asegúrate de que la respuesta sea válida antes de almacenarla
-                if (event.request.method === 'GET' && response.status === 200) {
-                    cache.put(event.request, response.clone());
-                }
-                return response;
-            });
-        })
-        .catch(function() {
-            // Si falla, intenta obtener la solicitud de la caché
-            return caches.match(event.request)
-            .then(function(response) {
-                // Retorna el recurso en caché o un fallback si es necesario
-                return response || new Response('No hay conexión y no se encuentra en caché');
-            });
-        })
-    );
+
+// Manejar mensajes push
+self.addEventListener('push', function(event) {
+    let notificationData = {};
+    
+    if (event.data) {
+        notificationData = event.data.json();
+    }
+    
+    const title = notificationData.notification.title || 'Título predeterminado';
+    const options = {
+        body: notificationData.notification.body || 'Cuerpo de notificación predeterminado.',
+        icon: notificationData.notification.icon || '/static/icono/image.png',
+    };
+
+    event.waitUntil(self.registration.showNotification(title, options));
 });

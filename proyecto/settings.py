@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from fcm_django.settings import FCM_DJANGO_SETTINGS
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -38,8 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+     'corsheaders',
     'core',
     'pwa',
+    'fcm_django'
 ]
 
 MIDDLEWARE = [
@@ -50,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'proyecto.urls'
@@ -148,3 +152,19 @@ PWA_APP_ICONS_APPLE = [
 
 
 PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, "serviceworker.js")
+
+
+# To learn more, visit the docs here:
+# https://cloud.google.com/docs/authentication/getting-started>
+
+FCM_DJANGO_SETTINGS = {
+    "FCM_SERVER_KEY": 'AIzaSyDjtFj1uX9K03oPulM6HsLVio3m3flbUlw',
+    "DEFAULT_FIREBASE_APP": "proyecto-push",
+    "APP_VERBOSE_NAME": "Datos personales",
+    "ONE_DEVICE_PER_USER": False,
+    "DELETE_INACTIVE_DEVICES": True,
+}
+CORS_ALLOWED_ORIGINS = [
+    "https://tu-dominio.com",  # Cambia esto por tu dominio real
+    "http://localhost:8000",    # Si estás en desarrollo
+]
